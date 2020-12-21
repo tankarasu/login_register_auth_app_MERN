@@ -4,4 +4,7 @@ dotenv.config();
 
 const password = process.env.mongoPassword;
 
-export const mongoURI = `mongodb+srv://tankarasu:${password}@tankarasu.mmpal.mongodb.net/test_auth?retryWrites=true&w=majority`;
+module.exports = {
+  mongoURI: `mongodb+srv://tankarasu:${password}@tankarasu.mmpal.mongodb.net/test_auth?retryWrites=true&w=majority`,
+  secretOrKey: "secret",
+};
