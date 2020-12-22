@@ -1,5 +1,7 @@
-import mongoose, { Mongoose } from "mongoose";
-const Schema = Mongoose.Schema;
+// import mongoose, { Mongoose } from "mongoose";
+const mongoose = require("mongoose");
+const { Schema } = mongoose;
+
 
 // create a Schema
 const UserSchema = new Schema({

@@ -1,15 +1,16 @@
-import express from "express";
+const express = require("express");
 const router = express.Router();
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import keys from "../../config/keys.js";
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const keys = require("../../config/keys.js");
 
 // Load input validation
-import validateRegisterInput from "../../validation/register.js";
-import validateLoginInput from "../../validation/login.js";
+
+const validateRegisterInput = require("../../validation/register.js");
+const validateLoginInput = require("../../validation/login.js");
 
 // load User model
-import User from "../../models/User.js";
+const User = require("../../models/User.js");
 
 // @route POST api/users/register
 // @desc Register user
@@ -45,3 +46,57 @@ router.post("/register", (req, res) => {
   });
 });
 
+// @route POST/api/users/login
+// @desc Login user and return JWT token
+// @access Public
+
+router.post("/login", (req, res) => {
+  // form validation
+  const { errors, isValid } = validateLoginInput(req.body);
+
+  // check validation
+  if (!isValid) return status(400).json(errors);
+
+  const email = req.body.email;
+  const password = req.body.password;
+
+  // find user by email
+  User.findOne({ email }).then(user => {
+    // check if user exist
+    if (!user)
+      return res.status(400).json({ emailnotfound: "Email not found" });
+
+    // check password
+    bcrypt.compare(password, user.password).then(isMatch => {
+      if (isMatch) {
+        // user matched
+        // create JWT Payload
+        const payload = {
+          id: user.id,
+          name: user.name,
+        };
+
+        // sign token
+        jwt.sign(
+          payload,
+          keys.secretOrKey,
+          {
+            expiresIn: 31556926, // 1 year in seconds
+          },
+          (err, token) => {
+            res.json({
+              success: true,
+              token: "Bearer " + token,
+            });
+          }
+        );
+      } else {
+        return res
+          .status(400)
+          .json({ passwordincorrect: "Password incorrect" });
+      }
+    });
+  });
+});
+
+module.exports = router;

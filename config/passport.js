@@ -1,6 +1,6 @@
-import { Strategy as JwtStrategy } from "passport-jwt";
+const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 const User = mongoose.model("users");
 const keys = require("../config/keys.js");
 

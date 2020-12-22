@@ -1,23 +1,33 @@
+const express = require("express");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const passport = require("passport");
 
-
-import express from "express";
-import mongoose from "mongoose";
-import { urlencoded, json } from "body-parser";
+const users = require("./routes/api/users.js");
 
 const app = express();
 
 // middlewares
-app.use(urlencoded({ extended: false }));
-app.use(json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // DB configuration
-import { mongoURI as db } from "./config/keys.js";
+const db = require("./config/keys.js").mongoURI;
 
 // connection to the DB
 mongoose
   .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("MongoDB successfully connected"))
   .catch(err => console.log(err));
+
+// Passport middleware
+app.use(passport.initialize());
+
+// Passport config
+require("./config/passport")(passport);
+
+// Routes
+app.use("/api/users", users);
 
 const port = process.env.PORT || 3000;
 

@@ -1,5 +1,5 @@
 // dont forget to install module dotenv
-import dotenv from "dotenv";
+const dotenv = require("dotenv");
 dotenv.config();
 
 const password = process.env.mongoPassword;
